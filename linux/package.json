@@ -1,0 +1,11 @@
+{
+  "name": "shifctp",
+  "version": "0.0.0",
+  "description": "Futures CTP API wraped by node.js",
+  "main": "main.js",
+  "private": true,
+  "gypfile": true,
+  "dependencies": {
+    "bindings": "~1.2.1"
+  }
+}
