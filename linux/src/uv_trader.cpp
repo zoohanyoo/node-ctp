@@ -61,7 +61,7 @@ int uv_trader::On(int cb_type, void(*callback)(CbRtnField* cbResult)) {
 	CbWrap* cb_wrap = new CbWrap();//析构函数中需要销毁
 	cb_wrap->callback = callback;
 	cb_map[cb_type] = cb_wrap;
-	logger_cout(log.append(" event id").append(to_string(cb_type)).append(" register").c_str());
+	logger_cout(log.append(" event id ").append(to_string(cb_type)).append(" register").c_str());
 	return 0;
 }
 void uv_trader::Connect(UVConnectField* pConnectField, void(*callback)(int, void*), int uuid) {
@@ -293,7 +293,6 @@ void uv_trader::OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, boo
 	}
 	pkg_senduv(T_ON_RSPERROR, _pRspInfo, pRspInfo, nRequestID, bIsLast);
 }
-///uv_queue_work 异步调用方法
 void uv_trader::_async(uv_work_t * work) {
 	LookupCtpApiBaton* baton = static_cast<LookupCtpApiBaton*>(work->data);
 	uv_trader* uv_trader_obj = static_cast<uv_trader*>(baton->uv_trader_obj);
@@ -303,9 +302,9 @@ void uv_trader::_async(uv_work_t * work) {
 	{
 						 UVConnectField* _pConnectF = static_cast<UVConnectField*>(baton->args);
 						 uv_trader_obj->m_pApi = CThostFtdcTraderApi::CreateFtdcTraderApi(_pConnectF->szPath);
-						 uv_trader_obj->m_pApi->RegisterSpi(uv_trader_obj);			// 注册事件类
-						 uv_trader_obj->m_pApi->SubscribePublicTopic(static_cast<THOST_TE_RESUME_TYPE>(_pConnectF->public_topic_type));// 注册公有流
-						 uv_trader_obj->m_pApi->SubscribePrivateTopic(static_cast<THOST_TE_RESUME_TYPE>(_pConnectF->private_topic_type));	// 注册私有流
+						 uv_trader_obj->m_pApi->RegisterSpi(uv_trader_obj);			
+						 uv_trader_obj->m_pApi->SubscribePublicTopic(static_cast<THOST_TE_RESUME_TYPE>(_pConnectF->public_topic_type));
+						 uv_trader_obj->m_pApi->SubscribePrivateTopic(static_cast<THOST_TE_RESUME_TYPE>(_pConnectF->private_topic_type));
 						 uv_trader_obj->m_pApi->RegisterFront(_pConnectF->front_addr);
 						 uv_trader_obj->m_pApi->Init();
 						 logger_cout(log.append("ftdc_trader_api init successed").c_str());
@@ -434,8 +433,9 @@ void uv_trader::invoke(void* field, int ret, void(*callback)(int, void*), int uu
 	baton->callback = callback;
 	baton->args = field;
 	baton->fun = ret;
-	baton->iRequestID = __sync_fetch_and_add(&iRequestID,1);
 	baton->uuid = uuid;
+    __sync_fetch_and_add(&iRequestID,1);
+    baton->iRequestID = iRequestID;
 	std::string head = "uv_trader invoke function uuid:";
 	logger_cout(head.append(to_string(uuid)).append(",requestid:").append(to_string(baton->iRequestID)).c_str());
 	uv_queue_work(uv_default_loop(), &baton->work, _async, _completed);

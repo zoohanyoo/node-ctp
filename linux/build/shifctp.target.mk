@@ -32,7 +32,7 @@ INCS_Debug := \
 	-I/root/.node-gyp/0.10.26/src \
 	-I/root/.node-gyp/0.10.26/deps/uv/include \
 	-I/root/.node-gyp/0.10.26/deps/v8/include \
-	-I$(srcdir)/6.2.5_20140811_apitraderapi_linux64
+	-I$(srcdir)/6.3.0_20140811_traderapi_linux64
 
 DEFS_Release := \
 	'-D_LARGEFILE_SOURCE' \
@@ -65,7 +65,7 @@ INCS_Release := \
 	-I/root/.node-gyp/0.10.26/src \
 	-I/root/.node-gyp/0.10.26/deps/uv/include \
 	-I/root/.node-gyp/0.10.26/deps/v8/include \
-	-I$(srcdir)/6.2.5_20140811_apitraderapi_linux64
+	-I$(srcdir)/6.3.0_20140811_traderapi_linux64
 
 OBJS := \
 	$(obj).target/$(TARGET)/src/shifctp.o \
@@ -120,8 +120,8 @@ LDFLAGS_Release := \
 	-m64
 
 LIBS := \
-	~/node-ctp/6.2.5_20140811_apitraderapi_linux64/thostmduserapi.so \
-	~/node-ctp/6.2.5_20140811_apitraderapi_linux64/thosttraderapi.so
+	/root/github/node-ctp/linux/6.3.0_20140811_traderapi_linux64/thostmduserapi.so \
+	/root/github/node-ctp/linux/6.3.0_20140811_traderapi_linux64/thosttraderapi.so
 
 $(obj).target/shifctp.node: GYP_LDFLAGS := $(LDFLAGS_$(BUILDTYPE))
 $(obj).target/shifctp.node: LIBS := $(LIBS)

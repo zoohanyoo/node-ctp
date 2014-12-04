@@ -7,6 +7,7 @@ Wrap Fetures CTP Client API to Node.js
 
 Shif发布的CTP接口是基于C++语言开发的，我们使用CTP开发交易策略软件时，一般也使用C++语言。
 我本人觉得这样不是很方便，我想能不能封装成Node.js模块，这样考虑基于以下两点：
+
     1. 交易策略脚本化，这样给用户提供了极大的方便，我也相信Javascript语言比C++好学。
     2. 自动交易需要一个高性能的并发多线程底层框架，原来都需要使用者自己开发。现在众所周知，
        Node.js使用了Libuv，好处我在这里不赘述。
@@ -72,7 +73,7 @@ mduser.connect('ctp url', undefined, function (result){
     gcc:v4.4.7 20120313;
     node-gyp:v1.0.2;
     node.js:v0.10.26;
-    tradeapi:6.2.5_20140811_apitraderapi_linux64
+    tradeapi:6.3.0_20140811_traderapi_linux64
 
     windows:win7 x64;
     visual studio 2013;

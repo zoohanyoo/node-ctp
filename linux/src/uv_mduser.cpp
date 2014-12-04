@@ -244,9 +244,10 @@ void uv_mduser::invoke(void* field, int count, int ret, void(*callback)(int, voi
 	baton->callback = callback;
 	baton->args = field;
 	baton->fun = ret;
-	baton->iRequestID = __sync_fetch_and_add(&iRequestID,1);
 	baton->uuid = uuid;
 	baton->nCount = count;
+    __sync_fetch_and_add(&iRequestID,1);
+    baton->iRequestID = iRequestID;
 	std::string head = "uv_mduser invoke function uuid:";
 	logger_cout(head.append(to_string(uuid)).append(",requestid:").append(to_string(baton->iRequestID)).c_str());
 	uv_queue_work(uv_default_loop(), &baton->work, _async, _completed);
