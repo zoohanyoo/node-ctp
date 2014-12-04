@@ -68,7 +68,6 @@ mduser.connect('ctp url', undefined, function (result){
 在Node.js x64下，Windows运行在Node.js x86下。注意下载不同版本的Node.js,下载地址：[Download Node.js](http://www.nodejs.org/download/).
 相应的Shif发布的Linux平台下CTP包选用x64的，而Windows平台的选用x86的。下载地址：[Download tradeapi](http://www.sfit.com.cn/5_2_DocumentDown.htm)
 
-    ###我自己的开发平台：
     linux:centos 6.4 x64;
     gcc:v4.4.7 20120313;
     node-gyp:v1.0.2;
@@ -78,7 +77,7 @@ mduser.connect('ctp url', undefined, function (result){
     windows:win7 x64;
     visual studio 2013;
     node-gyp:v1.0.2;
-    node.js:v0.10.26;
+    node.js:v0.10.26 x86;
     tradeapi:6.2.5_20140811_traderapi_win32
 
 
