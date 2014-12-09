@@ -80,7 +80,7 @@ private:
 	static void pkg_cb_rqsettlementinfo(CbRtnField* data, Local<Value>*cbArray);
 	static void pkg_cb_rsperror(CbRtnField* data, Local<Value>*cbArray);
 
-	static Local<Value> pkg_rspinfo(CThostFtdcRspInfoField *pRspInfo);
+	static Local<Value> pkg_rspinfo(void *vpRspInfo);
 
 	uv_trader* uvTrader;
 	static int s_uuid;

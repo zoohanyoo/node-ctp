@@ -401,7 +401,7 @@ void WrapMdUser::pkg_cb_userlogin(CbRtnField* data, Local<Value>*cbArray) {
 		*(cbArray + 2) = jsonRtn;
 	}
 	else {
-		*(cbArray + 2) = Undefined()->ToObject();
+		*(cbArray + 2) = Local<Value>::New(Undefined());
 	}
 
 	*(cbArray + 3) = pkg_rspinfo(pRspInfo);
@@ -419,7 +419,7 @@ void WrapMdUser::pkg_cb_userlogout(CbRtnField* data, Local<Value>*cbArray) {
 		*(cbArray + 2) = jsonRtn;
 	}
 	else {
-		*(cbArray + 2) = Undefined()->ToObject();
+		*(cbArray + 2) = Local<Value>::New(Undefined());
 	}
 	*(cbArray + 3) = pkg_rspinfo(pRspInfo);
 	return;
@@ -435,7 +435,7 @@ void WrapMdUser::pkg_cb_rspsubmarketdata(CbRtnField* data, Local<Value>*cbArray)
 		*(cbArray + 2) = jsonRtn;
 	}
 	else {
-		*(cbArray + 2) = Undefined()->ToObject();
+		*(cbArray + 2) = Local<Value>::New(Undefined());
 	}
 	*(cbArray + 3) = pkg_rspinfo(pRspInfo);
 	return;
@@ -451,7 +451,7 @@ void WrapMdUser::pkg_cb_unrspsubmarketdata(CbRtnField* data, Local<Value>*cbArra
 		*(cbArray + 2) = jsonRtn;
 	}
 	else {
-		*(cbArray + 2) = Undefined()->ToObject();
+		*(cbArray + 2) = Local<Value>::New(Undefined());
 	}
 	*(cbArray + 3) = pkg_rspinfo(pRspInfo);
 	return;
@@ -507,7 +507,7 @@ void WrapMdUser::pkg_cb_rtndepthmarketdata(CbRtnField* data, Local<Value>*cbArra
 		*cbArray = jsonRtn;
 	}
 	else {
-		*cbArray = Undefined()->ToObject();
+		*cbArray = Local<Value>::New(Undefined());
 	}
 	
 	return;
@@ -527,6 +527,6 @@ Local<Value> WrapMdUser::pkg_rspinfo(CThostFtdcRspInfoField *pRspInfo) {
 		return jsonInfo;
 	}
 	else {
-		return 	Undefined()->ToObject();
+		return 	Local<Value>::New(Undefined());
 	}
 }

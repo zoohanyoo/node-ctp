@@ -75,7 +75,7 @@ void uv_trader::ReqUserLogin(CThostFtdcReqUserLoginField *pReqUserLoginField, vo
 	this->invoke(_pReqUserLoginField, T_LOGIN_RE, callback, uuid);
 }
 void uv_trader::ReqUserLogout(CThostFtdcUserLogoutField *pUserLogout, void(*callback)(int, void*), int uuid) {
-	CThostFtdcUserLogoutField* _pUserLogout = new CThostFtdcUserLogoutField();
+    CThostFtdcUserLogoutField* _pUserLogout = new CThostFtdcUserLogoutField();
 	memcpy(_pUserLogout, pUserLogout, sizeof(CThostFtdcUserLogoutField));
 	this->invoke(_pUserLogout, T_LOGOUT_RE, callback, uuid);
 }
