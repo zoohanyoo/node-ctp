@@ -21,7 +21,7 @@ public:
 	uv_trader(void);
 	virtual ~uv_trader(void);
 	///注册事件
-	int On(int cb_type, void(*callback)(CbRtnField* cbResult));
+	int On(const char* eName,int cb_type, void(*callback)(CbRtnField* cbResult));
 	///连接前置机
 	void  Connect(UVConnectField* pConnectField, void(*callback)(int, void*),int uuid);
 	///用户登录请求

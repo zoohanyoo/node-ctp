@@ -8,16 +8,16 @@ std::map<int, Persistent<Function> > WrapMdUser::callback_map;
 std::map<int, Persistent<Function> > WrapMdUser::fun_rtncb_map;
 
 WrapMdUser::WrapMdUser() {
-	logger_cout("object start init");
+	logger_cout("wrap_mduser------>object start init");
 	uvMdUser = new uv_mduser();
-	logger_cout("object init successed");
+	logger_cout("wrap_mduser------>object init successed");
 }
 
 WrapMdUser::~WrapMdUser() {
     if(uvMdUser){
 	    delete uvMdUser;
     }
-	logger_cout("wraper object destroyed");
+	logger_cout("wrape_mduser------>object destroyed");
 }
 
 void WrapMdUser::Init(int args) {
@@ -108,14 +108,13 @@ Handle<Value> WrapMdUser::On(const Arguments& args) {
 	}
 
 	callback_map[eIt->second] = unRecoveryCb;
-	obj->uvMdUser->On(eIt->second, FunCallback);
-	logger_cout(((std::string)*eNameAscii).append(" event register successed").c_str());
+	obj->uvMdUser->On(*eNameAscii,eIt->second, FunCallback);
 	return scope.Close(Int32::New(0));
 }
 
 Handle<Value> WrapMdUser::Connect(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function connect";
+	std::string log = "wrap_mduser Connect------>";
 	if (args[0]->IsUndefined()) {
 		logger_cout("Wrong arguments->front addr");
 		ThrowException(Exception::TypeError(String::New("Wrong arguments->front addr")));
@@ -146,7 +145,7 @@ Handle<Value> WrapMdUser::Connect(const Arguments& args) {
 
 Handle<Value> WrapMdUser::ReqUserLogin(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqUserLogin";
+	std::string log = "wrap_mduser ReqUserLogin------>";
 	if (args[0]->IsUndefined() || args[1]->IsUndefined() || args[2]->IsUndefined()) {
 		std::string _head = std::string(log);
 		logger_cout(_head.append(" Wrong arguments").c_str());
@@ -182,7 +181,7 @@ Handle<Value> WrapMdUser::ReqUserLogin(const Arguments& args) {
 
 Handle<Value> WrapMdUser::ReqUserLogout(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqUserLogout";
+	std::string log = "wrap_mduser ReqUserLogout------>";
 
 	if (args[0]->IsUndefined() || args[1]->IsUndefined()) {
 		std::string _head = std::string(log);
@@ -215,7 +214,7 @@ Handle<Value> WrapMdUser::ReqUserLogout(const Arguments& args) {
 
 Handle<Value> WrapMdUser::SubscribeMarketData(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function subscribeMarketData ";
+	std::string log = "wrap_mduser SubscribeMarketData------>";
 
 	if (args[0]->IsUndefined() || !args[0]->IsArray()) {
 		std::string _head = std::string(log);
@@ -250,7 +249,7 @@ Handle<Value> WrapMdUser::SubscribeMarketData(const Arguments& args) {
 
 Handle<Value> WrapMdUser::UnSubscribeMarketData(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function unSubscribeMarketData";
+	std::string log = "wrap_mduser UnSubscribeMarketData------>";
 
 	if (args[0]->IsUndefined() || !args[0]->IsArray()) {
 		std::string _head = std::string(log);
@@ -296,7 +295,7 @@ Handle<Value> WrapMdUser::Disposed(const Arguments& args) {
 	fun_rtncb_map.clear();
 	delete obj->uvMdUser;
     obj->uvMdUser = NULL;
-	logger_cout("wrap disposed");
+	logger_cout("wrap_mduser Disposed------>wrap disposed");
 	return scope.Close(Undefined());
 }
 
@@ -372,7 +371,6 @@ void WrapMdUser::FunRtnCallback(int result, void* baton) {
 	HandleScope scope;
 	LookupCtpApiBaton* tmp = static_cast<LookupCtpApiBaton*>(baton);
 	if (tmp->uuid != -1) {
-		logger_cout(to_string(tmp->uuid).append(":uuid,").append("function return callback").c_str());
 		std::map<const int, Persistent<Function> >::iterator it = fun_rtncb_map.find(tmp->uuid);
 		Local<Value> argv[1] = { Local<Value>::New(Int32::New(tmp->nResult)) };
 		it->second->Call(Context::GetCurrent()->Global(), 1, argv);

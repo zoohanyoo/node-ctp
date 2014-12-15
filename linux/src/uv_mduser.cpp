@@ -25,11 +25,11 @@ void uv_mduser::Disposed() {
 		callback_it++;
 	}
 
-	logger_cout("uv_mduser object destroyed");
+	logger_cout("uv_mduser Disposed------>object destroyed");
 }
 
-int uv_mduser::On(int cb_type, void(*callback)(CbRtnField* cbResult)) {
-	std::string log = "on function";
+int uv_mduser::On(const char* eName,int cb_type, void(*callback)(CbRtnField* cbResult)) {
+	std::string log = "uv_mduser On------>";
 	std::map<int, CbWrap*>::iterator it = cb_map.find(cb_type);
 	if (it != cb_map.end()) {
 		logger_cout(log.append(" event id").append(to_string(cb_type)).append(" register repeat").c_str());
@@ -39,7 +39,7 @@ int uv_mduser::On(int cb_type, void(*callback)(CbRtnField* cbResult)) {
 	CbWrap* cb_wrap = new CbWrap();//析构函数中需要销毁
 	cb_wrap->callback = callback;
 	cb_map[cb_type] = cb_wrap;
-	logger_cout(log.append(" event id").append(to_string(cb_type)).append(" register").c_str());
+	logger_cout(log.append(" Event:").append(eName).append(" ID:").append(to_string(cb_type)).append(" register").c_str());
 	return 0;
 }
 
@@ -78,6 +78,8 @@ void uv_mduser::UnSubscribeMarketData(char *ppInstrumentID[], int nCount, void(*
 }
 
 void uv_mduser::OnFrontConnected() {
+	std::string log = "uv_mduser OnFrontConnected";
+	logger_cout(log.c_str());
 	CbRtnField* field = new CbRtnField();//调用完毕后需要销毁
 	field->eFlag = T_ON_CONNECT;//FrontConnected
     field->work.data = field;
@@ -85,6 +87,8 @@ void uv_mduser::OnFrontConnected() {
 }
 
 void uv_mduser::OnFrontDisconnected(int nReason) {
+	std::string log = "uv_mduser OnFrontDisconnected------>";
+	logger_cout(log.append("nReason:").append(to_string(nReason)).c_str());
 	CbRtnField* field = new CbRtnField();//调用完毕后需要销毁
 	field->eFlag = T_ON_DISCONNECTED;//FrontConnected
 	field->nReason = nReason;
@@ -93,6 +97,8 @@ void uv_mduser::OnFrontDisconnected(int nReason) {
 }
 
 void uv_mduser::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
+	std::string log = "uv_mduser OnRspUserLogin------>";
+	logger_cout(log.append("requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
 	CThostFtdcRspUserLoginField* _pRspUserLogin = NULL;
 	if (pRspUserLogin) {
 		_pRspUserLogin = new CThostFtdcRspUserLoginField();
@@ -102,6 +108,8 @@ void uv_mduser::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CThos
 }
 
 void uv_mduser::OnRspUserLogout(CThostFtdcUserLogoutField *pUserLogout, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
+	std::string log = "uv_mduser OnRspUserLogout------>";
+	logger_cout(log.append("requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
 	CThostFtdcUserLogoutField* _pUserLogout = NULL;
 	if (pUserLogout) {
 		_pUserLogout = new CThostFtdcUserLogoutField();
@@ -111,6 +119,8 @@ void uv_mduser::OnRspUserLogout(CThostFtdcUserLogoutField *pUserLogout, CThostFt
 }
 
 void uv_mduser::OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
+	std::string log = "uv_mduser OnRspError------>";
+	logger_cout(log.append("requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
 	CThostFtdcRspInfoField* _pRspInfo = NULL;
 	if (pRspInfo) {
 		_pRspInfo = new CThostFtdcRspInfoField();
@@ -120,6 +130,8 @@ void uv_mduser::OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, boo
 }
 
 void uv_mduser::OnRspSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
+	std::string log = "uv_mduser OnRspSubMarketData------>";
+	logger_cout(log.append("requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
 	CThostFtdcSpecificInstrumentField* _pSpecificInstrument = NULL;
 	if (pSpecificInstrument) {
 		_pSpecificInstrument = new CThostFtdcSpecificInstrumentField();
@@ -129,6 +141,8 @@ void uv_mduser::OnRspSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificI
 }
 
 void uv_mduser::OnRspUnSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
+	std::string log = "uv_mduser OnRspUnSubMarketData------>";
+	logger_cout(log.append("requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
 	CThostFtdcSpecificInstrumentField* _pSpecificInstrument = NULL;
 	if (pSpecificInstrument) {
 		_pSpecificInstrument = new CThostFtdcSpecificInstrumentField();
@@ -138,6 +152,8 @@ void uv_mduser::OnRspUnSubMarketData(CThostFtdcSpecificInstrumentField *pSpecifi
 }
 
 void uv_mduser::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData) {
+	std::string log = "uv_mduser OnRtnDepthMarketData";
+	logger_cout(log.c_str());
 	CThostFtdcDepthMarketDataField* _pDepthMarketData = NULL;
 	if (pDepthMarketData) {
 		_pDepthMarketData = new CThostFtdcDepthMarketDataField();
@@ -150,7 +166,7 @@ void uv_mduser::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarke
 void uv_mduser::_async(uv_work_t * work) {
 	LookupCtpApiBaton* baton = static_cast<LookupCtpApiBaton*>(work->data);
 	uv_mduser* uv_mduser_obj = static_cast<uv_mduser*>(baton->uv_trader_obj);
-	std::string log = "uv_mduser uv_queue async run,";
+	std::string log = "uv_mduser _async------>,";
 	switch (baton->fun) {
 	case T_CONNECT_RE:
 	{
@@ -159,21 +175,21 @@ void uv_mduser::_async(uv_work_t * work) {
 						 uv_mduser_obj->m_pApi->RegisterSpi(uv_mduser_obj);			// 注册事件类
 						 uv_mduser_obj->m_pApi->RegisterFront(_pConnectF->front_addr);
 						 uv_mduser_obj->m_pApi->Init();
-						 logger_cout(log.append("ftdc_mduser_api init successed").c_str());
+						 logger_cout(log.append("connect successed").c_str());
 						 break;
 	}
 	case T_LOGIN_RE:
 	{
 					   CThostFtdcReqUserLoginField *_pReqUserLoginField = static_cast<CThostFtdcReqUserLoginField*>(baton->args);
 					   baton->nResult = uv_mduser_obj->m_pApi->ReqUserLogin(_pReqUserLoginField, baton->iRequestID);
-					   logger_cout(log.append("ftdc_mduser_api ReqUserLogin run,the result:").append(to_string(baton->nResult)).c_str());
+					   logger_cout(log.append("invoke ReqUserLogin,the result:").append(to_string(baton->nResult)).c_str());
 					   break;
 	}
 	case T_LOGOUT_RE:
 	{
 						CThostFtdcUserLogoutField* _pUserLogout = static_cast<CThostFtdcUserLogoutField*>(baton->args);
 						baton->nResult = uv_mduser_obj->m_pApi->ReqUserLogout(_pUserLogout, baton->iRequestID);
-						logger_cout(log.append("ftdc_mduser_api ReqUserLogout run,the result:").append(to_string(baton->nResult)).c_str());
+						logger_cout(log.append("invoke ReqUserLogout,the result:").append(to_string(baton->nResult)).c_str());
 
 						break;
 	}
@@ -181,14 +197,14 @@ void uv_mduser::_async(uv_work_t * work) {
 	{
 									   char ** _ppInstrumentID = static_cast<char **>(baton->args);	 									   
 									   baton->nResult = uv_mduser_obj->m_pApi->SubscribeMarketData(_ppInstrumentID, baton->nCount);
-									   logger_cout(log.append("ftdc_mduser_api SubscribeMarketData run,the result:").append(to_string(baton->nResult)).c_str());
+									   logger_cout(log.append("invoke SubscribeMarketData,the result:").append(to_string(baton->nResult)).c_str());
 									   break;
 	}
 	case T_UNSUBSCRIBE_MARKET_DATA_RE:
 	{
 										 char ** _ppInstrumentID = static_cast<char **>(baton->args);
 										 baton->nResult = uv_mduser_obj->m_pApi->UnSubscribeMarketData(_ppInstrumentID, baton->nCount);
-										 logger_cout(log.append("ftdc_mduser_api UnSubscribeMarketData run,the result:").append(to_string(baton->nResult)).c_str());
+										 logger_cout(log.append("invoke UnSubscribeMarketData,the result:").append(to_string(baton->nResult)).c_str());
 
 										 break;
 	}
@@ -236,14 +252,12 @@ void uv_mduser::invoke(void* field, int count, int ret, void(*callback)(int, voi
 	baton->nCount = count;
     __sync_fetch_and_add(&iRequestID,1);
     baton->iRequestID = iRequestID;
-	std::string head = "uv_mduser invoke function uuid:";
+	std::string head = "uv_mduser invoke------> uuid:";
 	logger_cout(head.append(to_string(uuid)).append(",requestid:").append(to_string(baton->iRequestID)).c_str());
 	uv_queue_work(uv_default_loop(), &baton->work, _async, _completed);
 }
 
 void uv_mduser::on_invoke(int event_type, void* _stru, CThostFtdcRspInfoField *pRspInfo_org, int nRequestID, bool bIsLast){
-	std::string log = "ftdc_mduser_api callback,event type:";
-	logger_cout(log.append(to_string(event_type)).append(",requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
     CThostFtdcRspInfoField* _pRspInfo = NULL;
 	if (pRspInfo_org) {	  		
 		_pRspInfo = new CThostFtdcRspInfoField();

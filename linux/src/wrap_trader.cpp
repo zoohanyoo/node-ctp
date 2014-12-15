@@ -8,16 +8,16 @@ std::map<int, Persistent<Function> > WrapTrader::callback_map;
 std::map<int, Persistent<Function> > WrapTrader::fun_rtncb_map;
 
 WrapTrader::WrapTrader() {	
-	logger_cout("object start init");
+	logger_cout("wrap_trader------>object start init");
 	uvTrader = new uv_trader();	
-	logger_cout("object init successed");
+	logger_cout("wrap_trader------>object init successed");
 }
 
 WrapTrader::~WrapTrader(void) {
     if(uvTrader){
 	    delete uvTrader;
     }
-	logger_cout("wraper object destroyed");
+	logger_cout("wrap_trader------>object destroyed");
 }
 
 void WrapTrader::Init(int args) {
@@ -149,14 +149,13 @@ Handle<Value> WrapTrader::On(const Arguments& args) {
 	}
 
 	callback_map[eIt->second] = unRecoveryCb;	
-	obj->uvTrader->On(eIt->second, FunCallback);
-	logger_cout(((std::string)*eNameAscii).append(" event register successed").c_str());
+	obj->uvTrader->On(*eNameAscii,eIt->second, FunCallback);
 	return scope.Close(Int32::New(0));
 }
 
 Handle<Value> WrapTrader::Connect(const Arguments& args) {
 	HandleScope scope;	
-	std::string log = "function connect";
+	std::string log = "wrap_trader Connect------>";
 	if (args[0]->IsUndefined()) {
 		logger_cout("Wrong arguments->front addr");
 		ThrowException(Exception::TypeError(String::New("Wrong arguments->front addr")));
@@ -196,7 +195,7 @@ Handle<Value> WrapTrader::Connect(const Arguments& args) {
 
 Handle<Value> WrapTrader::ReqUserLogin(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqUserLogin";
+	std::string log = "wrap_trader ReqUserLogin------>";
 	if (args[0]->IsUndefined() || args[1]->IsUndefined() || args[2]->IsUndefined()) {
 		std::string _head = std::string(log);
 		logger_cout(_head.append(" Wrong arguments").c_str());
@@ -232,7 +231,7 @@ Handle<Value> WrapTrader::ReqUserLogin(const Arguments& args) {
 
 Handle<Value> WrapTrader::ReqUserLogout(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqUserLogout";
+	std::string log = "wrap_trader ReqUserLogout------>";
 
 	if (args[0]->IsUndefined() || args[1]->IsUndefined()) {
 		std::string _head = std::string(log);
@@ -265,7 +264,7 @@ Handle<Value> WrapTrader::ReqUserLogout(const Arguments& args) {
 
 Handle<Value> WrapTrader::ReqSettlementInfoConfirm(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqSettlementInfoConfirm";
+	std::string log = "wrap_trader ReqSettlementInfoConfirm------>";
 
 	if (args[0]->IsUndefined() || args[1]->IsUndefined()) {
 		std::string _head = std::string(log);
@@ -298,7 +297,7 @@ Handle<Value> WrapTrader::ReqSettlementInfoConfirm(const Arguments& args) {
 
 Handle<Value> WrapTrader::ReqQryInstrument(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqQryInstrument";
+	std::string log = "wrap_trader ReqQryInstrument------>";
 
 	if (args[0]->IsUndefined()) {
 		std::string _head = std::string(log);
@@ -328,7 +327,7 @@ Handle<Value> WrapTrader::ReqQryInstrument(const Arguments& args) {
 
 Handle<Value> WrapTrader::ReqQryTradingAccount(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqQryTradingAccount";
+	std::string log = "wrap_trader ReqQryTradingAccount------>";
 
 	if (args[0]->IsUndefined() || args[1]->IsUndefined()) {
 		std::string _head = std::string(log);
@@ -360,7 +359,7 @@ Handle<Value> WrapTrader::ReqQryTradingAccount(const Arguments& args) {
 
 Handle<Value> WrapTrader::ReqQryInvestorPosition(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqQryInvestorPosition";
+	std::string log = "wrap_trader ReqQryInvestorPosition------>";
 
 	if (args[0]->IsUndefined() || args[1]->IsUndefined() || args[2]->IsUndefined()) {
 		std::string _head = std::string(log);
@@ -396,7 +395,7 @@ Handle<Value> WrapTrader::ReqQryInvestorPosition(const Arguments& args) {
 
 Handle<Value> WrapTrader::ReqQryInvestorPositionDetail(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqQryInvestorPositionDetail";
+	std::string log = "wrap_trader ReqQryInvestorPositionDetail------>";
 
 	if (args[0]->IsUndefined() || args[1]->IsUndefined() || args[2]->IsUndefined()) {
 		std::string _head = std::string(log);
@@ -432,7 +431,7 @@ Handle<Value> WrapTrader::ReqQryInvestorPositionDetail(const Arguments& args) {
 
 Handle<Value> WrapTrader::ReqOrderInsert(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqOrderInsert";
+	std::string log = "wrap_trader ReqOrderInsert------>";
 
 	if (args[0]->IsUndefined() || !args[0]->IsObject()) {
 		std::string _head = std::string(log);
@@ -601,7 +600,7 @@ Handle<Value> WrapTrader::ReqOrderInsert(const Arguments& args) {
 
 Handle<Value> WrapTrader::ReqOrderAction(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqOrderInsert";
+	std::string log = "wrap_trader ReqOrderInsert------>";
 
 	if (args[0]->IsUndefined() || !args[0]->IsObject()) {
 		std::string _head = std::string(log);
@@ -703,7 +702,7 @@ Handle<Value> WrapTrader::ReqOrderAction(const Arguments& args) {
 
 Handle<Value> WrapTrader::ReqQryInstrumentMarginRate(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqQryInstrumentMarginRate";
+	std::string log = "wrap_trader ReqQryInstrumentMarginRate------>";
 
 	if (args[0]->IsUndefined() || args[1]->IsUndefined() || args[2]->IsUndefined() || args[3]->IsUndefined()) {
 		std::string _head = std::string(log);
@@ -747,7 +746,7 @@ Handle<Value> WrapTrader::ReqQryInstrumentMarginRate(const Arguments& args) {
 
 Handle<Value> WrapTrader::ReqQryDepthMarketData(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqQryDepthMarketData";
+	std::string log = "wrap_trader ReqQryDepthMarketData------>";
 
 	if (args[0]->IsUndefined()) {
 		std::string _head = std::string(log);
@@ -778,7 +777,7 @@ Handle<Value> WrapTrader::ReqQryDepthMarketData(const Arguments& args) {
 
 Handle<Value> WrapTrader::ReqQrySettlementInfo(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqQrySettlementInfo";
+	std::string log = "wrap_trader ReqQrySettlementInfo------>";
 
 	if (args[0]->IsUndefined() || args[1]->IsUndefined() || args[2]->IsUndefined()) {
 		std::string _head = std::string(log);
@@ -830,7 +829,7 @@ Handle<Value> WrapTrader::Disposed(const Arguments& args) {
 	fun_rtncb_map.clear();
 	delete obj->uvTrader;
     obj->uvTrader = NULL;
-	logger_cout("wrap disposed");
+	logger_cout("wrap_trader Disposed------>wrap disposed");
 	return scope.Close(Undefined());
 }
 
@@ -1004,7 +1003,6 @@ void WrapTrader::FunRtnCallback(int result, void* baton) {
 	HandleScope scope;
 	LookupCtpApiBaton* tmp = static_cast<LookupCtpApiBaton*>(baton);	 
 	if (tmp->uuid != -1) {
-		logger_cout(to_string(tmp->uuid).append(":uuid,").append("function return callback").c_str());
 		std::map<int, Persistent<Function> >::iterator it = fun_rtncb_map.find(tmp->uuid);
 		Local<Value> argv[1] = { Local<Value>::New(Int32::New(tmp->nResult)) };
 		it->second->Call(Context::GetCurrent()->Global(), 1, argv);
