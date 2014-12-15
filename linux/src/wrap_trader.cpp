@@ -14,7 +14,9 @@ WrapTrader::WrapTrader() {
 }
 
 WrapTrader::~WrapTrader(void) {
-	delete uvTrader;
+    if(uvTrader){
+	    delete uvTrader;
+    }
 	logger_cout("wraper object destroyed");
 }
 
@@ -68,6 +70,9 @@ void WrapTrader::Init(int args) {
 
 	tpl->PrototypeTemplate()->Set(String::NewSymbol("disconnect"),
 		FunctionTemplate::New(Disposed)->GetFunction());
+
+	tpl->PrototypeTemplate()->Set(String::NewSymbol("getTradingDay"),
+		FunctionTemplate::New(GetTradingDay)->GetFunction());
 
 	constructor = Persistent<Function>::New(tpl->GetFunction());
 }
@@ -391,11 +396,38 @@ Handle<Value> WrapTrader::ReqQryInvestorPosition(const Arguments& args) {
 
 Handle<Value> WrapTrader::ReqQryInvestorPositionDetail(const Arguments& args) {
 	HandleScope scope;
+	std::string log = "function reqQryInvestorPositionDetail";
 
-	//WrapTrader* obj = ObjectWrap::Unwrap<WrapTrader>(args.This());
+	if (args[0]->IsUndefined() || args[1]->IsUndefined() || args[2]->IsUndefined()) {
+		std::string _head = std::string(log);
+		logger_cout(_head.append(" Wrong arguments").c_str());
+		ThrowException(Exception::TypeError(String::New("Wrong arguments")));
+		return scope.Close(Undefined());
+	}
+	int uuid = -1;
+	WrapTrader* obj = ObjectWrap::Unwrap<WrapTrader>(args.This());
+	if (!args[3]->IsUndefined() && args[3]->IsFunction()) {
+		uuid = ++s_uuid;
+		fun_rtncb_map[uuid] = Persistent<Function>::New(Local<Function>::Cast(args[3]));
+		std::string _head = std::string(log);
+		logger_cout(_head.append(" uuid is ").append(to_string(uuid)).c_str());
+	}
+	Local<String> broker = args[0]->ToString();
+	Local<String> investorId = args[1]->ToString();
+	Local<String> instrumentId = args[2]->ToString();
+	String::AsciiValue brokerAscii(broker);
+	String::AsciiValue investorIdAscii(investorId);
+	String::AsciiValue instrumentIdAscii(instrumentId);
 
-	const unsigned val = 0;
-	return scope.Close(Number::New(val));
+	CThostFtdcQryInvestorPositionDetailField req;
+	memset(&req, 0, sizeof(req));
+	strcpy(req.BrokerID, ((std::string)*brokerAscii).c_str());
+	strcpy(req.InvestorID, ((std::string)*investorIdAscii).c_str());
+	strcpy(req.InstrumentID, ((std::string)*instrumentIdAscii).c_str());
+
+	logger_cout(log.append(" ").append((std::string)*brokerAscii).append("|").append((std::string)*investorIdAscii).append("|").append((std::string)*instrumentIdAscii).c_str());
+	obj->uvTrader->ReqQryInvestorPositionDetail(&req, FunRtnCallback, uuid);
+	return scope.Close(Undefined());
 }
 
 Handle<Value> WrapTrader::ReqOrderInsert(const Arguments& args) {
@@ -715,7 +747,7 @@ Handle<Value> WrapTrader::ReqQryInstrumentMarginRate(const Arguments& args) {
 
 Handle<Value> WrapTrader::ReqQryDepthMarketData(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqQryInstrumentMarginRate";
+	std::string log = "function reqQryDepthMarketData";
 
 	if (args[0]->IsUndefined()) {
 		std::string _head = std::string(log);
@@ -746,7 +778,7 @@ Handle<Value> WrapTrader::ReqQryDepthMarketData(const Arguments& args) {
 
 Handle<Value> WrapTrader::ReqQrySettlementInfo(const Arguments& args) {
 	HandleScope scope;
-	std::string log = "function reqQryInstrumentMarginRate";
+	std::string log = "function reqQrySettlementInfo";
 
 	if (args[0]->IsUndefined() || args[1]->IsUndefined() || args[2]->IsUndefined()) {
 		std::string _head = std::string(log);
@@ -797,8 +829,16 @@ Handle<Value> WrapTrader::Disposed(const Arguments& args) {
 	callback_map.clear();
 	fun_rtncb_map.clear();
 	delete obj->uvTrader;
+    obj->uvTrader = NULL;
 	logger_cout("wrap disposed");
 	return scope.Close(Undefined());
+}
+
+Handle<Value> WrapTrader::GetTradingDay(const Arguments& args){
+    HandleScope scope;
+	WrapTrader* obj = ObjectWrap::Unwrap<WrapTrader>(args.This());
+	const char* tradingDay = obj->uvTrader->GetTradingDay();
+	return scope.Close(String::New(tradingDay));
 }
 
 void WrapTrader::FunCallback(CbRtnField *data) {
@@ -1462,7 +1502,7 @@ void WrapTrader::pkg_cb_rqinvestorpositiondetail(CbRtnField* data, Local<Value>*
 		jsonRtn->Set(String::NewSymbol("BrokerID"), String::New(pInvestorPositionDetail->BrokerID));
 		jsonRtn->Set(String::NewSymbol("InvestorID"), String::New(pInvestorPositionDetail->InvestorID));
 		jsonRtn->Set(String::NewSymbol("HedgeFlag"), Int32::New(pInvestorPositionDetail->HedgeFlag));
-		jsonRtn->Set(String::NewSymbol("Direction"), Int32::New(pInvestorPositionDetail->Direction));  //var charval = String.fromCharCode(asciival);
+		jsonRtn->Set(String::NewSymbol("Direction"), Int32::New(pInvestorPositionDetail->Direction));
 		jsonRtn->Set(String::NewSymbol("OpenDate"), String::New(pInvestorPositionDetail->OpenDate));
 		jsonRtn->Set(String::NewSymbol("TradeID"), String::New(pInvestorPositionDetail->TradeID));
 		jsonRtn->Set(String::NewSymbol("Volume"), Int32::New(pInvestorPositionDetail->Volume));

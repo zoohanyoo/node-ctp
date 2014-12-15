@@ -14,7 +14,9 @@ WrapMdUser::WrapMdUser() {
 }
 
 WrapMdUser::~WrapMdUser() {
-	delete uvMdUser;
+    if(uvMdUser){
+	    delete uvMdUser;
+    }
 	logger_cout("wraper object destroyed");
 }
 
@@ -293,6 +295,7 @@ Handle<Value> WrapMdUser::Disposed(const Arguments& args) {
 	callback_map.clear();
 	fun_rtncb_map.clear();
 	delete obj->uvMdUser;
+    obj->uvMdUser = NULL;
 	logger_cout("wrap disposed");
 	return scope.Close(Undefined());
 }

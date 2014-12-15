@@ -57,6 +57,7 @@ public:
 	//对象初始化
 	static void Init(int args);
 	static Handle<Value> NewInstance(const Arguments& args);
+    static Handle<Value> GetTradingDay(const Arguments& args);
 
 private:
 	static void initEventMap();	
@@ -81,7 +82,6 @@ private:
 	static void pkg_cb_rsperror(CbRtnField* data, Local<Value>*cbArray);
 
 	static Local<Value> pkg_rspinfo(void *vpRspInfo);
-
 	uv_trader* uvTrader;
 	static int s_uuid;
 	static void FunCallback(CbRtnField *data);
@@ -89,8 +89,7 @@ private:
 	static Persistent<Function> constructor;
 	static std::map<const char*, int,ptrCmp> event_map;
 	static std::map<int, Persistent<Function> > callback_map;
-	static std::map<int, Persistent<Function> > fun_rtncb_map;
-	
+	static std::map<int, Persistent<Function> > fun_rtncb_map; 	
 };
 
 

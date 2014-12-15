@@ -3,6 +3,7 @@
 
 #include <node.h>
 
+#define MSG_MAX_COUNT 200
 ///////////////////////////////内部使用
 #define T_CONNECT_RE 1
 #define T_LOGIN_RE 2
@@ -65,6 +66,7 @@ struct LookupCtpApiBaton {
 };
 
 struct CbRtnField {
+    uv_work_t work;
 	int eFlag;//事件标识
 	int nRequestID;
 	int nReason;

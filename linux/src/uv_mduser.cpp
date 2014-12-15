@@ -3,16 +3,16 @@
 #include "ThostFtdcMdApi.h"
 #include "ThostFtdcUserApiDataType.h"
 
-std::map<int, uv_async_t*> uv_mduser::async_map;
 std::map<int, CbWrap*> uv_mduser::cb_map;
 
 uv_mduser::uv_mduser(void) {
 	iRequestID = 0;
 	m_pApi = NULL;
+    uv_async_init(uv_default_loop(),&async_t,NULL);//靠Node靠
 }
 
 uv_mduser::~uv_mduser(void) {
-
+    uv_close((uv_handle_t*)&async_t,NULL);
 }
 
 void uv_mduser::Disposed() {
@@ -25,25 +25,16 @@ void uv_mduser::Disposed() {
 		callback_it++;
 	}
 
-	std::map<int, uv_async_t*>::iterator uvasync_it = async_map.begin();
-	while (uvasync_it != async_map.end()) {
-		uv_close((uv_handle_s*)uvasync_it->second, NULL);
-		uvasync_it++;
-	}
 	logger_cout("uv_mduser object destroyed");
 }
 
 int uv_mduser::On(int cb_type, void(*callback)(CbRtnField* cbResult)) {
 	std::string log = "on function";
-	std::map<int, uv_async_t*>::iterator it = async_map.find(cb_type);
-	if (it != async_map.end()) {
+	std::map<int, CbWrap*>::iterator it = cb_map.find(cb_type);
+	if (it != cb_map.end()) {
 		logger_cout(log.append(" event id").append(to_string(cb_type)).append(" register repeat").c_str());
 		return 1;//Callback is defined before
 	}
-
-	uv_async_t* s_async = new uv_async_t();//析构函数中需要销毁
-	uv_async_init(uv_default_loop(), s_async, completeCb);
-	async_map[cb_type] = s_async;
 
 	CbWrap* cb_wrap = new CbWrap();//析构函数中需要销毁
 	cb_wrap->callback = callback;
@@ -87,24 +78,18 @@ void uv_mduser::UnSubscribeMarketData(char *ppInstrumentID[], int nCount, void(*
 }
 
 void uv_mduser::OnFrontConnected() {
-	std::map<int, uv_async_t*>::iterator it = async_map.find(T_ON_CONNECT);
-	if (it != async_map.end()) {
-		CbRtnField* field = new CbRtnField();//调用完毕后需要销毁
-		field->eFlag = T_ON_CONNECT;//FrontConnected
-		it->second->data = field;//对象销毁后，指针清空
-		uv_async_send(it->second);
-	}
+	CbRtnField* field = new CbRtnField();//调用完毕后需要销毁
+	field->eFlag = T_ON_CONNECT;//FrontConnected
+    field->work.data = field;
+	uv_queue_work(uv_default_loop(), &field->work, _on_async, _on_completed);
 }
 
 void uv_mduser::OnFrontDisconnected(int nReason) {
-	std::map<int, uv_async_t*>::iterator it = async_map.find(T_ON_DISCONNECTED);
-	if (it != async_map.end()) {
-		CbRtnField* field = new CbRtnField();//调用完毕后需要销毁
-		field->eFlag = T_ON_DISCONNECTED;//FrontConnected
-		field->nReason = nReason;
-		it->second->data = field;//对象销毁后，指针清空
-		uv_async_send(it->second);
-	}
+	CbRtnField* field = new CbRtnField();//调用完毕后需要销毁
+	field->eFlag = T_ON_DISCONNECTED;//FrontConnected
+	field->nReason = nReason;
+	field->work.data = field;//对象销毁后，指针清空
+	uv_queue_work(uv_default_loop(), &field->work, _on_async, _on_completed);
 }
 
 void uv_mduser::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
@@ -113,7 +98,7 @@ void uv_mduser::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CThos
 		_pRspUserLogin = new CThostFtdcRspUserLoginField();
 		memcpy(_pRspUserLogin, pRspUserLogin, sizeof(CThostFtdcRspUserLoginField));
 	}
-	pkg_senduv(T_ON_RSPUSERLOGIN, _pRspUserLogin, pRspInfo, nRequestID, bIsLast);
+	on_invoke(T_ON_RSPUSERLOGIN, _pRspUserLogin, pRspInfo, nRequestID, bIsLast);
 }
 
 void uv_mduser::OnRspUserLogout(CThostFtdcUserLogoutField *pUserLogout, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
@@ -122,7 +107,7 @@ void uv_mduser::OnRspUserLogout(CThostFtdcUserLogoutField *pUserLogout, CThostFt
 		_pUserLogout = new CThostFtdcUserLogoutField();
 		memcpy(_pUserLogout, pUserLogout, sizeof(CThostFtdcUserLogoutField));
 	}
-	pkg_senduv(T_ON_RSPUSERLOGOUT, _pUserLogout, pRspInfo, nRequestID, bIsLast);
+	on_invoke(T_ON_RSPUSERLOGOUT, _pUserLogout, pRspInfo, nRequestID, bIsLast);
 }
 
 void uv_mduser::OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
@@ -131,7 +116,7 @@ void uv_mduser::OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, boo
 		_pRspInfo = new CThostFtdcRspInfoField();
 		memcpy(_pRspInfo, pRspInfo, sizeof(CThostFtdcRspInfoField));
 	}
-	pkg_senduv(T_ON_RSPERROR, _pRspInfo, pRspInfo, nRequestID, bIsLast);
+	on_invoke(T_ON_RSPERROR, _pRspInfo, pRspInfo, nRequestID, bIsLast);
 }
 
 void uv_mduser::OnRspSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
@@ -140,7 +125,7 @@ void uv_mduser::OnRspSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificI
 		_pSpecificInstrument = new CThostFtdcSpecificInstrumentField();
 		memcpy(_pSpecificInstrument, pSpecificInstrument, sizeof(CThostFtdcSpecificInstrumentField));
 	}
-	pkg_senduv(T_ON_RSPSUBMARKETDATA, _pSpecificInstrument, pRspInfo, nRequestID, bIsLast);
+	on_invoke(T_ON_RSPSUBMARKETDATA, _pSpecificInstrument, pRspInfo, nRequestID, bIsLast);
 }
 
 void uv_mduser::OnRspUnSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
@@ -149,7 +134,7 @@ void uv_mduser::OnRspUnSubMarketData(CThostFtdcSpecificInstrumentField *pSpecifi
 		_pSpecificInstrument = new CThostFtdcSpecificInstrumentField();
 		memcpy(_pSpecificInstrument, pSpecificInstrument, sizeof(CThostFtdcSpecificInstrumentField));
 	}
-	pkg_senduv(T_ON_RSPUNSUBMARKETDATA, _pSpecificInstrument, pRspInfo, nRequestID, bIsLast);
+	on_invoke(T_ON_RSPUNSUBMARKETDATA, _pSpecificInstrument, pRspInfo, nRequestID, bIsLast);
 }
 
 void uv_mduser::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData) {
@@ -158,7 +143,7 @@ void uv_mduser::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarke
 		_pDepthMarketData = new CThostFtdcDepthMarketDataField();
 		memcpy(_pDepthMarketData, pDepthMarketData, sizeof(CThostFtdcDepthMarketDataField));
 	}
-	pkg_senduv(T_ON_RTNDEPTHMARKETDATA, _pDepthMarketData, new CThostFtdcRspInfoField(), 0, 0);
+	on_invoke(T_ON_RTNDEPTHMARKETDATA, _pDepthMarketData, new CThostFtdcRspInfoField(), 0, 0);
 }
 
 ///uv_queue_work 异步调用方法
@@ -222,9 +207,13 @@ void uv_mduser::_completed(uv_work_t * work, int) {
 	delete baton->args;
 	delete baton;
 }
-///uv_async_init 服务器消息回调
-void uv_mduser::completeCb(uv_async_t* handle, int) {
-	CbRtnField* cbTrnField = (CbRtnField*)handle->data;	 	
+
+void uv_mduser::_on_async(uv_work_t * work){
+    //do nothing
+}
+
+void uv_mduser::_on_completed(uv_work_t * work,int){
+	CbRtnField* cbTrnField = static_cast<CbRtnField*>(work->data);
 	std::map<int, CbWrap*>::iterator it = cb_map.find(cbTrnField->eFlag);
 	if (it != cb_map.end()) {
 		cb_map[cbTrnField->eFlag]->callback(cbTrnField);
@@ -234,7 +223,6 @@ void uv_mduser::completeCb(uv_async_t* handle, int) {
 	if (cbTrnField->rspInfo)
 		delete cbTrnField->rspInfo;
 	delete cbTrnField;
-	handle->data = NULL;
 }
 
 void uv_mduser::invoke(void* field, int count, int ret, void(*callback)(int, void*), int uuid) {
@@ -253,25 +241,21 @@ void uv_mduser::invoke(void* field, int count, int ret, void(*callback)(int, voi
 	uv_queue_work(uv_default_loop(), &baton->work, _async, _completed);
 }
 
-void uv_mduser::pkg_senduv(int event_type, void* _stru, CThostFtdcRspInfoField *pRspInfo_org, int nRequestID, bool bIsLast) {
+void uv_mduser::on_invoke(int event_type, void* _stru, CThostFtdcRspInfoField *pRspInfo_org, int nRequestID, bool bIsLast){
 	std::string log = "ftdc_mduser_api callback,event type:";
 	logger_cout(log.append(to_string(event_type)).append(",requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
-	std::map<int, uv_async_t*>::iterator it = async_map.find(event_type);
-	if (it != async_map.end()) {
-		CThostFtdcRspInfoField* _pRspInfo = NULL;
-		if (pRspInfo_org) {
-			_pRspInfo = new CThostFtdcRspInfoField();
-			memcpy(_pRspInfo, pRspInfo_org, sizeof(CThostFtdcRspInfoField));		
-		}
-	 
-		CbRtnField* field = new CbRtnField();
-		field->eFlag = event_type;
-		field->rtnField = _stru;
-		field->rspInfo =  (void*)_pRspInfo;			
-		field->nRequestID = nRequestID;
-		field->bIsLast = bIsLast;
-		it->second->data = field;  		
-		uv_async_send(it->second);		
-	}
-
+    CThostFtdcRspInfoField* _pRspInfo = NULL;
+	if (pRspInfo_org) {	  		
+		_pRspInfo = new CThostFtdcRspInfoField();
+		memcpy(_pRspInfo, pRspInfo_org, sizeof(CThostFtdcRspInfoField));
+	}  
+	CbRtnField* field = new CbRtnField();
+    field->work.data = field;
+	field->eFlag = event_type;
+	field->rtnField = _stru;
+	field->rspInfo = (void*)_pRspInfo;
+	field->nRequestID = nRequestID;
+	field->bIsLast = bIsLast;
+	uv_queue_work(uv_default_loop(), &field->work, _on_async, _on_completed);
 }
+

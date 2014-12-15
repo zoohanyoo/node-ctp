@@ -48,6 +48,8 @@ public:
 	void ReqQryDepthMarketData(CThostFtdcQryDepthMarketDataField *pQryDepthMarketData, void(*callback)(int, void*),int uuid);
 	///请求查询投资者结算结果
 	void ReqQrySettlementInfo(CThostFtdcQrySettlementInfoField *pQrySettlementInfo, void(*callback)(int, void*),int uuid);
+    
+    const char* GetTradingDay();
 	//对象初始化
 	//void Init(int args);
 	///断开
@@ -58,10 +60,14 @@ private:
 	static void _async(uv_work_t * work);
 	///异步调用完成 queue
 	static void _completed(uv_work_t * work, int);
-	///异步完成 async
-	static void completeCb(uv_async_t* handle,int);
+
+    static void _on_async(uv_work_t * work);
+
+    static void _on_completed(uv_work_t * work,int);
 	///调用ctp api
 	void invoke(void* field, int ret, void(*callback)(int, void*), int uuid);
+
+    void on_invoke(int event_type, void* _stru, CThostFtdcRspInfoField *pRspInfo_org, int nRequestID, bool bIsLast);
 	///当客户端与交易后台建立起通信连接时（还未登录前），该方法被调用
 	virtual void OnFrontConnected();
 	///连接断开时，该方法被调用
@@ -108,13 +114,11 @@ private:
 	virtual void OnRspQrySettlementInfo(CThostFtdcSettlementInfoField *pSettlementInfo, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	///错误应答 
 	virtual void OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//打包发送到uv的消息
-	void pkg_senduv(int event_type, void* _stru, CThostFtdcRspInfoField *pRspInfo_org, int nRequestID, bool bIsLast);
 
 	CThostFtdcTraderApi* m_pApi;//交易API
 
 	int iRequestID;
-	static std::map<int, uv_async_t*> async_map;
+    uv_async_t async_t;
 	static std::map<int, CbWrap*> cb_map;
 };
 
