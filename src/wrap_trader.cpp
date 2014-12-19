@@ -460,12 +460,12 @@ Handle<Value> WrapTrader::ReqOrderInsert(const Arguments& args) {
 		return scope.Close(Undefined());
 	}
 	String::AsciiValue investorId_(investorId->ToString());
-	Local<Value> instrunmentId = jsonObj->Get(v8::String::New("instrunmentId"));
-	if (instrunmentId->IsUndefined()) {
-		ThrowException(Exception::TypeError(String::New("Wrong arguments->instrunmentId")));
+	Local<Value> instrumentId = jsonObj->Get(v8::String::New("instrumentId"));
+	if (instrumentId->IsUndefined()) {
+		ThrowException(Exception::TypeError(String::New("Wrong arguments->instrumentId")));
 		return scope.Close(Undefined());
 	}
-	String::AsciiValue instrunmentId_(instrunmentId->ToString());
+	String::AsciiValue instrumentId_(instrumentId->ToString());
 	Local<Value> priceType = jsonObj->Get(v8::String::New("priceType"));
 	if (priceType->IsUndefined()) {
 		ThrowException(Exception::TypeError(String::New("Wrong arguments->priceType")));
@@ -565,7 +565,7 @@ Handle<Value> WrapTrader::ReqOrderInsert(const Arguments& args) {
 
 	strcpy(req.BrokerID, ((std::string)*brokerId_).c_str());
 	strcpy(req.InvestorID, ((std::string)*investorId_).c_str());
-	strcpy(req.InstrumentID, ((std::string)*instrunmentId_).c_str());
+	strcpy(req.InstrumentID, ((std::string)*instrumentId_).c_str());
 	req.OrderPriceType = ((std::string)*priceType_)[0];
 	req.Direction = ((std::string)*direction_)[0];
 	req.CombOffsetFlag[0] = ((std::string)*combOffsetFlag_)[0];
@@ -581,7 +581,7 @@ Handle<Value> WrapTrader::ReqOrderInsert(const Arguments& args) {
 	logger_cout(log.
         append("brokerID:").append((std::string)*brokerId_).append("|").
 		append("investorID:").append((std::string)*investorId_).append("|").
-		append("instrumentID:").append((std::string)*instrunmentId_).append("|").
+		append("instrumentID:").append((std::string)*instrumentId_).append("|").
 		append("priceType:").append((std::string)*priceType_).append("|").
 		append("direction:").append((std::string)*direction_).append("|").
 		append("comboffsetFlag:").append((std::string)*combOffsetFlag_).append("|").
@@ -631,12 +631,12 @@ Handle<Value> WrapTrader::ReqOrderAction(const Arguments& args) {
 		return scope.Close(Undefined());
 	}
 	String::AsciiValue investorId_(vinvestorId->ToString());
-	Local<Value> vinstrunmentId = jsonObj->Get(v8::String::New("instrunmentId"));
-	if (vinstrunmentId->IsUndefined()) {
-		ThrowException(Exception::TypeError(String::New("Wrong arguments->instrunmentId")));
+	Local<Value> vinstrumentId = jsonObj->Get(v8::String::New("instrumentId"));
+	if (vinstrumentId->IsUndefined()) {
+		ThrowException(Exception::TypeError(String::New("Wrong arguments->instrumentId")));
 		return scope.Close(Undefined());
 	}
-	String::AsciiValue instrunmentId_(vinstrunmentId->ToString());
+	String::AsciiValue instrumentId_(vinstrumentId->ToString());
 	Local<Value> vactionFlag = jsonObj->Get(v8::String::New("actionFlag"));
 	if (vactionFlag->IsUndefined()) {
 		ThrowException(Exception::TypeError(String::New("Wrong arguments->actionFlag")));
@@ -682,11 +682,11 @@ Handle<Value> WrapTrader::ReqOrderAction(const Arguments& args) {
 	strcpy(req.BrokerID, ((std::string)*brokerId_).c_str());
 	strcpy(req.InvestorID, ((std::string)*investorId_).c_str());
 	req.ActionFlag = actionFlag;
-	strcpy(req.InstrumentID, ((std::string)*instrunmentId_).c_str());
+	strcpy(req.InstrumentID, ((std::string)*instrumentId_).c_str());
 	logger_cout(log.
 		append((std::string)*brokerId_).append("|").
 		append((std::string)*investorId_).append("|").
-		append((std::string)*instrunmentId_).append("|").
+		append((std::string)*instrumentId_).append("|").
 		append(to_string(actionFlag)).append("|").c_str());
 
 	obj->uvTrader->ReqOrderAction(&req, FunRtnCallback, uuid);
@@ -834,7 +834,6 @@ Handle<Value> WrapTrader::GetTradingDay(const Arguments& args){
 }
 
 void WrapTrader::FunCallback(CbRtnField *data) {
-	HandleScope scope;
 	std::map<int, Persistent<Function> >::iterator cIt = callback_map.find(data->eFlag);
 	if (cIt == callback_map.end())
 		return;
@@ -989,7 +988,6 @@ void WrapTrader::FunCallback(CbRtnField *data) {
 						   break;
 	}
 	}
-	scope.Close(Undefined());
 }
 
 void WrapTrader::FunRtnCallback(int result, void* baton) {

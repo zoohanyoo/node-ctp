@@ -130,7 +130,7 @@ Handle<Value> WrapMdUser::Connect(const Arguments& args) {
 	}
 
 	Local<String> frontAddr = args[0]->ToString();
-	Local<String> szPath = args[1]->IsUndefined() ? String::New("t") : args[0]->ToString();
+	Local<String> szPath = args[1]->IsUndefined() ? String::New("m") : args[0]->ToString();
 	String::AsciiValue addrAscii(frontAddr);
 	String::AsciiValue pathAscii(szPath);
 

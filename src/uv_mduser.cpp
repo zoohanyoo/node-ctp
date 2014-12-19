@@ -97,68 +97,68 @@ void uv_mduser::OnFrontDisconnected(int nReason) {
 }
 
 void uv_mduser::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
-	std::string log = "uv_mduser OnRspUserLogin------>";
-	logger_cout(log.append("requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
 	CThostFtdcRspUserLoginField* _pRspUserLogin = NULL;
 	if (pRspUserLogin) {
 		_pRspUserLogin = new CThostFtdcRspUserLoginField();
 		memcpy(_pRspUserLogin, pRspUserLogin, sizeof(CThostFtdcRspUserLoginField));
 	}
+	std::string log = "uv_mduser OnRspUserLogin------>";
+	logger_cout(log.append("requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
 	on_invoke(T_ON_RSPUSERLOGIN, _pRspUserLogin, pRspInfo, nRequestID, bIsLast);
 }
 
 void uv_mduser::OnRspUserLogout(CThostFtdcUserLogoutField *pUserLogout, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
-	std::string log = "uv_mduser OnRspUserLogout------>";
-	logger_cout(log.append("requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
 	CThostFtdcUserLogoutField* _pUserLogout = NULL;
 	if (pUserLogout) {
 		_pUserLogout = new CThostFtdcUserLogoutField();
 		memcpy(_pUserLogout, pUserLogout, sizeof(CThostFtdcUserLogoutField));
 	}
+	std::string log = "uv_mduser OnRspUserLogout------>";
+	logger_cout(log.append("requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
 	on_invoke(T_ON_RSPUSERLOGOUT, _pUserLogout, pRspInfo, nRequestID, bIsLast);
 }
 
 void uv_mduser::OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
-	std::string log = "uv_mduser OnRspError------>";
-	logger_cout(log.append("requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
 	CThostFtdcRspInfoField* _pRspInfo = NULL;
 	if (pRspInfo) {
 		_pRspInfo = new CThostFtdcRspInfoField();
 		memcpy(_pRspInfo, pRspInfo, sizeof(CThostFtdcRspInfoField));
 	}
+	std::string log = "uv_mduser OnRspError------>";
+	logger_cout(log.append("requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
 	on_invoke(T_ON_RSPERROR, _pRspInfo, pRspInfo, nRequestID, bIsLast);
 }
 
 void uv_mduser::OnRspSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
-	std::string log = "uv_mduser OnRspSubMarketData------>";
-	logger_cout(log.append("requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
 	CThostFtdcSpecificInstrumentField* _pSpecificInstrument = NULL;
 	if (pSpecificInstrument) {
 		_pSpecificInstrument = new CThostFtdcSpecificInstrumentField();
 		memcpy(_pSpecificInstrument, pSpecificInstrument, sizeof(CThostFtdcSpecificInstrumentField));
 	}
+	std::string log = "uv_mduser OnRspSubMarketData------>";
+	logger_cout(log.append("requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
 	on_invoke(T_ON_RSPSUBMARKETDATA, _pSpecificInstrument, pRspInfo, nRequestID, bIsLast);
 }
 
 void uv_mduser::OnRspUnSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {
-	std::string log = "uv_mduser OnRspUnSubMarketData------>";
-	logger_cout(log.append("requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
 	CThostFtdcSpecificInstrumentField* _pSpecificInstrument = NULL;
 	if (pSpecificInstrument) {
 		_pSpecificInstrument = new CThostFtdcSpecificInstrumentField();
 		memcpy(_pSpecificInstrument, pSpecificInstrument, sizeof(CThostFtdcSpecificInstrumentField));
 	}
+	std::string log = "uv_mduser OnRspUnSubMarketData------>";
+	logger_cout(log.append("requestid:").append(to_string(nRequestID)).append(",islast:").append(to_string(bIsLast)).c_str());
 	on_invoke(T_ON_RSPUNSUBMARKETDATA, _pSpecificInstrument, pRspInfo, nRequestID, bIsLast);
 }
 
 void uv_mduser::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData) {
-	std::string log = "uv_mduser OnRtnDepthMarketData";
-	logger_cout(log.c_str());
 	CThostFtdcDepthMarketDataField* _pDepthMarketData = NULL;
 	if (pDepthMarketData) {
 		_pDepthMarketData = new CThostFtdcDepthMarketDataField();
 		memcpy(_pDepthMarketData, pDepthMarketData, sizeof(CThostFtdcDepthMarketDataField));
 	}
+	std::string log = "uv_mduser OnRtnDepthMarketData";
+	logger_cout(log.c_str());
 	on_invoke(T_ON_RTNDEPTHMARKETDATA, _pDepthMarketData, new CThostFtdcRspInfoField(), 0, 0);
 }
 
