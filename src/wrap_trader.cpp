@@ -1592,7 +1592,7 @@ void WrapTrader::pkg_cb_rqinstrument(CbRtnField* data, Local<Value>*cbArray) {
 		jsonRtn->Set(String::NewSymbol("InstrumentName"), String::New(pInstrument->InstrumentName));
 		jsonRtn->Set(String::NewSymbol("ExchangeInstID"), String::New(pInstrument->ExchangeInstID));
 		jsonRtn->Set(String::NewSymbol("ProductID"), String::New(pInstrument->ProductID));
-		jsonRtn->Set(String::NewSymbol("ProductClass"), Int32::New(pInstrument->ProductClass));
+		jsonRtn->Set(String::NewSymbol("ProductClass"), String::New(charto_string(pInstrument->ProductClass).c_str()));
 		jsonRtn->Set(String::NewSymbol("DeliveryYear"), Int32::New(pInstrument->DeliveryYear));
 		jsonRtn->Set(String::NewSymbol("DeliveryMonth"), Int32::New(pInstrument->DeliveryMonth));
 		jsonRtn->Set(String::NewSymbol("MaxMarketOrderVolume"), Int32::New(pInstrument->MaxMarketOrderVolume));
@@ -1612,7 +1612,7 @@ void WrapTrader::pkg_cb_rqinstrument(CbRtnField* data, Local<Value>*cbArray) {
 		jsonRtn->Set(String::NewSymbol("PositionDateType"), String::New(charto_string(pInstrument->PositionDateType).c_str()));
 		jsonRtn->Set(String::NewSymbol("LongMarginRatio"), Number::New(pInstrument->LongMarginRatio));
 		jsonRtn->Set(String::NewSymbol("ShortMarginRatio"), Number::New(pInstrument->ShortMarginRatio));
-		jsonRtn->Set(String::NewSymbol("MaxMarginSideAlgorithm"), Int32::New(pInstrument->MaxMarginSideAlgorithm));
+		jsonRtn->Set(String::NewSymbol("MaxMarginSideAlgorithm"), String::New(charto_string(pInstrument->MaxMarginSideAlgorithm).c_str()));
 		*(cbArray + 2) = jsonRtn;
 	}
 	else {
