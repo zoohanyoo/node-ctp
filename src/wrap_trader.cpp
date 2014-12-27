@@ -995,8 +995,8 @@ void WrapTrader::FunRtnCallback(int result, void* baton) {
 	LookupCtpApiBaton* tmp = static_cast<LookupCtpApiBaton*>(baton);	 
 	if (tmp->uuid != -1) {
 		std::map<int, Persistent<Function> >::iterator it = fun_rtncb_map.find(tmp->uuid);
-		Local<Value> argv[1] = { Local<Value>::New(Int32::New(tmp->nResult)) };
-		it->second->Call(Context::GetCurrent()->Global(), 1, argv);
+		Local<Value> argv[2] = { Local<Value>::New(Int32::New(tmp->nResult)),Local<Value>::New(Int32::New(tmp->iRequestID)) };
+		it->second->Call(Context::GetCurrent()->Global(), 2, argv);
 		it->second.Dispose();
 		fun_rtncb_map.erase(tmp->uuid);	  		
 	}

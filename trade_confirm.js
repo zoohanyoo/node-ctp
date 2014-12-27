@@ -4,7 +4,7 @@ var trader = ctp.createTrader();
 
 trader.on("connect",function(result){
     console.log("on connected");
-    trader.reqUserLogin('0292','0000001000','122015',function(result){
+    trader.reqUserLogin('0292','0000001000','122015',function(result,iRequestID){
         console.log('login return val is '+result);
     });
 
