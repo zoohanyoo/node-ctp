@@ -3,7 +3,7 @@ ctp.settings({ log: true});
 var mduser = ctp.createMdUser();
 mduser.on("connect",function(result){
     console.log("on connected");
-    mduser.reqUserLogin('0292', '0000001000', '122015',function(result){
+    mduser.reqUserLogin('', '', '',function(result){
         
     
     });
@@ -40,7 +40,7 @@ mduser.on('rspError', function (requestId, isLast, info) {
 
 });
 
-mduser.connect('tcp://222.240.130.30:41213', undefined, function (f) {
+mduser.connect('', undefined, function (f) {
 
     console.log(f);
 });
