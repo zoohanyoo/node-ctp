@@ -66,7 +66,7 @@ mduser.connect('ctp url', undefined, function (result){
 交易接口示例
 
 ```javascript
-#confirm
+//confirm
 
 ctp = require('bindings')('shifctp');
 ctp.settings({ log: true});
@@ -92,7 +92,7 @@ trader.on('rspInfoconfirm',function(requestId, isLast, field, info){
 
 });
 
-#query settlement info
+//query settlement info
 
 trader.on("connect",function(result){
     console.log("on connected");
@@ -133,7 +133,7 @@ trader.connect('',undefined,0,1,function(result){
     console.log('connect return val is '+result);
 });
 
-#get system trading day
+//get system trading day
 
 trader.on('rspUserLogin',function(requestId, isLast, field, info){
     
