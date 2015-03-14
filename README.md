@@ -14,7 +14,8 @@ Shif发布的CTP接口是基于C++语言开发的，我们使用CTP开发交易�
 ##Demo
 
 我们可以这样调用CTP接口
-行情订阅调用
+行情订阅调用示例
+
 ```javascript
 
 var ctp = require('bindings')('shifctp');
@@ -62,7 +63,7 @@ mduser.connect('ctp url', undefined, function (result){
 
 
 ```
-交易接口
+交易接口示例
 
 ```javascript
 #confirm
@@ -91,12 +92,63 @@ trader.on('rspInfoconfirm',function(requestId, isLast, field, info){
 
 });
 
+#query settlement info
+
+trader.on("connect",function(result){
+    console.log("on connected");
+    trader.reqUserLogin('','','',function(result,iRequestID){
+        console.log('login return val is '+result);
+    });
+
+});
+
+trader.on('rspUserLogin',function(requestId, isLast, field, info){
+    
+    console.log(JSON.stringify(field));
+    console.log(info);
+
+    trader.reqQrySettlementInfo('','','',function(result,iRequestID){
+        console.log('settlementinfo return val is '+result);
+
+    });
+});
+
+trader.on('rqSettlementInfo',function(requestId, isLast, field, info){
+    console.log('rqsettlementinfo callback');
+    console.log(field);
+    console.log(info);
+
+});
+
+trader.on('rtnOrder',function(field){
+    console.log(field);
+});
+
+trader.on('rspError',function(requestId, isLast, field){
+    console.log(JSON.stringify(field));
+
+});
+
+trader.connect('',undefined,0,1,function(result){
+    console.log('connect return val is '+result);
+});
+
+#get system trading day
+
+trader.on('rspUserLogin',function(requestId, isLast, field, info){
+    
+    console.log(JSON.stringify(field));
+    console.log(info);
+
+
+    var tradingDay = trader.getTradingDay();
+    console.log(tradingDay);
+
+
+});
 
 
 ```
-
-
-
 
 ##运行环境
 
@@ -116,7 +168,6 @@ trader.on('rspInfoconfirm',function(requestId, isLast, field, info){
     node.js:v0.10.26 x86;
     tradeapi:6.3.0_20140811_traderapi_win32
 
-
 ##编译
 
     1.$npm install node-gyp;
@@ -128,7 +179,6 @@ trader.on('rspInfoconfirm',function(requestId, isLast, field, info){
 
 ##介绍
 
-待续
 
 
 
