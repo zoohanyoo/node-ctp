@@ -4,8 +4,6 @@ var mduser = ctp.createMdUser();
 mduser.on("connect",function(result){
     console.log("on connected");
     mduser.reqUserLogin('', '', '',function(result){
-        
-    
     });
 
 });

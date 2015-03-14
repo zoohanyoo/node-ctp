@@ -14,7 +14,7 @@ Shif发布的CTP接口是基于C++语言开发的，我们使用CTP开发交易�
 ##Demo
 
 我们可以这样调用CTP接口
-
+行情订阅调用
 ```javascript
 
 var ctp = require('bindings')('shifctp');
@@ -62,6 +62,42 @@ mduser.connect('ctp url', undefined, function (result){
 
 
 ```
+交易接口
+
+```javascript
+#confirm
+
+ctp = require('bindings')('shifctp');
+ctp.settings({ log: true});
+var trader = ctp.createTrader();
+
+trader.on("connect",function(result){
+    console.log("on connected");
+    trader.reqUserLogin('','','',function(result,iRequestID){
+        console.log('login return val is '+result);
+    });
+
+});
+
+trader.on('rspUserLogin',function(requestId, isLast, field, info){
+    
+    console.log(JSON.stringify(field));
+    console.log(info);
+});
+
+trader.on('rspInfoconfirm',function(requestId, isLast, field, info){
+
+    console.log()
+
+});
+
+
+
+```
+
+
+
+
 ##运行环境
 
 我分别给出了Linux和Windows平台下的工程，由于Shif发布接口文件平台的缘故，Linux版本的运行
@@ -78,7 +114,7 @@ mduser.connect('ctp url', undefined, function (result){
     visual studio 2013;
     node-gyp:v1.0.2;
     node.js:v0.10.26 x86;
-    tradeapi:6.2.5_20140811_traderapi_win32
+    tradeapi:6.3.0_20140811_traderapi_win32
 
 
 ##编译
