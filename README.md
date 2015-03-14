@@ -177,8 +177,30 @@ trader.on('rspUserLogin',function(requestId, isLast, field, info){
     注意：windows环境下，node-gyp默认生成vs2010版本的工程，如果没有安装此版本的vs，需要设置环境变量
     如：GYP_MSVS_VERSION=2013
 
-##介绍
+##API介绍
+ 
+```javastript
+//加载shifctp模块
+var ctp = require('bindings')('shifctp');
+//设置日志开关
+ctp.settings({log:true});
+//初始化Mduser对象
+var mduser = ctp.createMduser();
+```
+#初始化CTP，并且连接前置机
 
+```javastript
+
+mduser.connect('ctp url', undefined, function (result){
+    console.log(result);
+
+});
+//connect event
+mduser.on("connect",function(result){
+    console.log('on connect!');
+});
+
+```
 
 
 
