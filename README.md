@@ -187,7 +187,7 @@ ctp.settings({log:true});
 //初始化Mduser对象
 var mduser = ctp.createMduser();
 ```
-#初始化CTP，并且连接前置机
+###初始化CTP，并且连接前置机
 
 ```javastript
 
