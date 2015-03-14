@@ -179,7 +179,7 @@ trader.on('rspUserLogin',function(requestId, isLast, field, info){
 
 ##API介绍
  
-```javastript
+```javascript
 //加载shifctp模块
 var ctp = require('bindings')('shifctp');
 //设置日志开关
@@ -189,8 +189,7 @@ var mduser = ctp.createMduser();
 ```
 ###初始化CTP，并且连接前置机
 
-```javastript
-
+```javascript
 mduser.connect('ctp url', undefined, function (result){
     console.log(result);
 
